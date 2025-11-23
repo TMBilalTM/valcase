@@ -49,6 +49,12 @@ export function DailyRewardModal({ isOpen, onClose, onClaim }: DailyRewardModalP
       setClaiming(false);
       if (result.reward) {
         onClaim(result.reward);
+        // Update local state to prevent re-opening
+        setRewardData({
+          canClaim: false,
+          streak: result.streak || 0,
+          nextReward: result.nextReward || 650
+        });
         setTimeout(() => {
           onClose();
           setClaimed(false);

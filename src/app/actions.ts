@@ -9,9 +9,10 @@ import { revalidatePath } from "next/cache";
 import { verifyToken } from "@/lib/auth";
 import { getCollection } from "@/lib/mongodb";
 import type { UserProfile } from "@/types/profile";
+import { ObjectId } from "mongodb";
 
 const INITIAL_DAILY_REWARD = 650;
-const STREAK_BONUS = 75;
+const STREAK_BONUS = 50;
 
 export async function getSessionId() {
   const cookieStore = await cookies();
@@ -175,9 +176,11 @@ export async function claimDailyRewardAction() {
   const newBalance = profile.balance + rewardAmount;
 
   // Update profile
-  const collection = await getCollection<UserProfile>("profiles");
+  const collection = await getCollection<UserProfile>("users");
+  const query = ObjectId.isValid(userId) ? { _id: new ObjectId(userId) } : { username: userId };
+  
   await collection.updateOne(
-    { username: userId },
+    query,
     {
       $set: {
         balance: newBalance,
