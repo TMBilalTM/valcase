@@ -17,9 +17,7 @@
 body {
   margin: 0;
   min-height: 100vh;
-  background: radial-gradient(circle at 20% 20%, rgba(244, 63, 94, 0.12), transparent 45%),
-    radial-gradient(circle at 80% 0%, rgba(59, 130, 246, 0.18), transparent 40%),
-    #01030d;
+  background: transparent;
   color: var(--foreground);
   font-family: var(--font-geist-sans), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
@@ -37,4 +35,34 @@ main {
 
 section + section {
   margin-top: 4rem;
+}
+
+@layer utilities {
+  @keyframes ticker {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  @keyframes glow-pulse {
+    0%, 100% {
+      opacity: 0.4;
+      filter: blur(0px);
+    }
+    50% {
+      opacity: 0.9;
+      filter: blur(4px);
+    }
+  }
+
+  .animate-ticker {
+    animation: ticker 28s linear infinite;
+  }
+
+  .animate-glow {
+    animation: glow-pulse 6s ease-in-out infinite;
+  }
 }

@@ -1,103 +1,195 @@
 import Link from "next/link";
-import { SpotlightCard } from "@/components/ui/spotlight-card";
-import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
 
-const heroTiles = [
-  {
-    title: "Ajanlar",
-    description: "Yeteneklerini Keşfet",
-    body: "Her biri farklı yeteneklere sahip ajanlarla oyun tarzını belirle.",
-    icon: <span className="text-xs font-bold text-[#ff4655]">ROLE</span>,
-    footer: "Tüm Ajanlar",
-  },
-  {
-    title: "Haritalar",
-    description: "Savaş Alanları",
-    body: "Dünyanın dört bir yanındaki arenalarda stratejini konuştur.",
-    icon: <span className="text-xs font-bold text-[#ff4655]">MAP</span>,
-    footer: "Bölgeleri İncele",
-  },
-  {
-    title: "Arsenal",
-    description: "Silah Koleksiyonu",
-    body: "En nadir kaplamalar ve özel efektlerle silahlarını kişiselleştir.",
-    icon: <span className="text-xs font-bold text-[#ff4655]">SKIN</span>,
-    footer: "Vitrine Git",
-  },
-  {
-    title: "Savaş Bileti",
-    description: "Özel İçerikler",
-    body: "Seviye atladıkça açılan özel kartlar, uğurlar ve spreyler.",
-    icon: <span className="text-xs font-bold text-[#ff4655]">BP</span>,
-    footer: "Ödülleri Gör",
-  },
+import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
+import { VideoText } from "@/registry/magicui/video-text";
+
+const heroStats = [
+  { label: "Açılan Kasa", value: "1.2M+" },
+  { label: "Canlı Drop", value: "24" },
+  { label: "Aktif Koleksiyon", value: "08" },
 ];
 
-const snapshotStats = [
-  { label: "Aktif Kasa", value: "3 Koleksiyon" },
-  { label: "Toplam Ödül", value: "5 Kategori" },
-  { label: "Oyuncu", value: "Global" },
-  { label: "Erişim", value: "Herkese Açık" },
+const heroHighlights = [
+  { title: "Radiant Frontier", note: "Mythic rotasyon aktif" },
+  { title: "Protocol Vault", note: "Dengeli ödül havuzu" },
+  { title: "Omega Archive", note: "Lore odaklı ganimet" },
+];
+
+const heroVideo = {
+  src: "https://assets.contentstack.io/v3/assets/bltb6530b271fddd0b1/blt0e640f7f4b0f8434/5e8c6dee5d90243ce318b1aa/VALORANT_Duelists.mp4",
+  poster: "https://i.ytimg.com/vi/e_E9W2vsRbQ/maxresdefault.jpg",
+};
+
+const spotlightCases = [
+  { name: "Radiant Frontier", price: "₺680", odds: "Ultra %20" },
+  { name: "Protocol Vault", price: "₺420", odds: "Dengeli %55" },
+  { name: "Omega Archive", price: "₺540", odds: "Lore %35" },
+];
+
+const featuredAgents = [
+  { name: "Jett", role: "Duelist", perk: "Dash Boost" },
+  { name: "Killjoy", role: "Sentinel", perk: "Nano Swarm" },
+  { name: "Fade", role: "Initiator", perk: "Haunt" },
+];
+
+const skinRotation = [
+  { name: "Prime Vandal", tier: "Ultra" },
+  { name: "Reaver Phantom", tier: "Exclusive" },
+  { name: "Sentinels of Light Sheriff", tier: "Premium" },
 ];
 
 export function ValHero() {
   return (
-    <section className="space-y-6">
-      <div className="flex flex-col gap-2 border-l-4 border-[#ff4655] pl-6">
-        <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#ff4655]">ValCase Platformu</p>
-        <h1 className="text-5xl font-black uppercase italic tracking-tighter text-white sm:text-7xl">
-          SINIRLARI ZORLA.
-        </h1>
-        <p className="max-w-2xl text-lg font-medium text-white/80">
-          ValCase ile Valorant evreninin en değerli parçalarına ulaş. Ajanlar, haritalar ve silah koleksiyonları seni bekliyor.
-        </p>
+    <section className="relative overflow-hidden rounded-4xl border border-white/15 text-white">
+      <div className="absolute inset-0 -z-10">
+        <VideoText src={heroVideo.src} poster={heroVideo.poster} className="h-full rounded-none opacity-80">
+          VALORANT PRIME
+        </VideoText>
       </div>
-      <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-        <SpotlightCard
-          eyebrow="ÖZEL KOLEKSİYON"
-          title="KASALARI AÇ VE KAZAN"
-          description="Şansını dene, en nadir skinleri ve kozmetikleri koleksiyonuna ekle. Valorant dünyasının heyecanını burada yaşa."
-          action={
+
+      <div className="relative z-10 space-y-8 px-6 py-12 backdrop-blur-2xl sm:px-12 sm:py-16">
+        <div className="flex flex-wrap items-center gap-3 text-[10px] font-black uppercase tracking-[0.45em] text-white/70">
+          <span className="inline-flex items-center rounded-full bg-[#ff4655] px-4 py-1 text-[9px] tracking-[0.5em] text-white">
+            CANLI
+          </span>
+          <span>Valorant Sinematik Kasa Deneyimi</span>
+          <span className="text-white/40">Episode 08 · Reactor Field</span>
+        </div>
+
+        <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
+          <div className="space-y-8">
+            <div className="space-y-4">
+              <p className="text-[11px] font-black uppercase tracking-[0.5em] text-white/60">Valcase · Prime Broadcast</p>
+              <h1 className="text-4xl font-black uppercase tracking-tight sm:text-6xl">
+                Valorant kasalarını canlı aç, koleksiyon oluştur
+              </h1>
+              <p className="max-w-2xl text-base text-white/80">
+                Valcase, Prime kasalarını gerçek drop oranlarıyla açmanı sağlar; anlık ödül akışı, profil ilerlemesi ve kasa
+                istatistikleri tek panelde birleşir. Blur katmanlı hero, video arka plana rağmen kasa içeriğini net tutar.
+              </p>
+            </div>
+
             <div className="flex flex-wrap gap-4">
               <Link
                 href="#cases"
-                className="inline-flex items-center justify-center bg-[#ff4655] px-8 py-4 text-sm font-bold uppercase tracking-wider text-white transition hover:bg-[#ff4655]/90"
+                className="inline-flex items-center justify-center rounded-full bg-[#ff4655] px-8 py-3 text-xs font-black uppercase tracking-[0.4em] transition hover:bg-[#ff4655]/90"
               >
-                ŞİMDİ OYNA
+                Kasa Aç
               </Link>
               <Link
                 href="/profile"
-                className="inline-flex items-center justify-center border border-white/40 px-8 py-4 text-sm font-bold uppercase tracking-wider text-white transition hover:bg-white hover:text-black"
+                className="inline-flex items-center justify-center rounded-full border border-white/40 px-8 py-3 text-xs font-black uppercase tracking-[0.4em] text-white/80 transition hover:text-white"
               >
-                PROFİL
+                Profilim
               </Link>
             </div>
-          }
-          className="min-h-80 rounded-none border-white/10 bg-[#0f1923]"
-        />
-        <div className="space-y-4">
-          <BentoGrid className="md:grid-cols-2">
-            {heroTiles.map((tile) => (
-              <BentoGridItem 
-                key={tile.title} 
-                title={tile.title} 
-                description={tile.description} 
-                icon={tile.icon} 
-                footer={tile.footer}
-                className="rounded-none border-white/10 bg-[#0f1923]"
-              >
-                <p className="text-sm font-medium text-white/60">{tile.body}</p>
-              </BentoGridItem>
-            ))}
-          </BentoGrid>
-          <div className="grid gap-3 sm:grid-cols-2">
-            {snapshotStats.map((stat) => (
-              <div key={stat.label} className="border border-white/10 bg-[#0f1923] px-4 py-3 text-white">
-                <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#ff4655]">{stat.label}</p>
-                <p className="text-xl font-black uppercase italic tracking-wider">{stat.value}</p>
-              </div>
-            ))}
+
+            <div className="grid gap-4 sm:grid-cols-3">
+              {heroStats.map((stat) => (
+                <div key={stat.label} className="rounded-3xl border border-white/20 bg-black/40 px-5 py-4">
+                  <p className="text-[9px] uppercase tracking-[0.6em] text-white/50">{stat.label}</p>
+                  <p className="mt-2 text-3xl font-black">{stat.value}</p>
+                </div>
+              ))}
+            </div>
           </div>
+
+          <div className="space-y-5 rounded-3xl border border-white/20 bg-black/45 p-6">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <p className="text-[10px] uppercase tracking-[0.45em] text-white/50">Şu An Yayında</p>
+                <p className="text-2xl font-black">Valorant · Duelists</p>
+              </div>
+              <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#00f0ff]">HDR FEED</span>
+            </div>
+            <p className="text-sm text-white/75">
+              Hero arka planı Riot&apos;un &ldquo;Duelists&rdquo; sinematiğinden beslenir. Yüzey mat bir cam panel gibi davranarak içerik kutularını öne çıkarır.
+            </p>
+
+            <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
+              <p className="text-xs font-semibold uppercase tracking-[0.4em] text-white/50">Now Playing</p>
+              <div className="mt-2 flex items-center justify-between">
+                <div>
+                  <p className="text-base font-semibold">Duelists Cinematic</p>
+                  <p className="text-xs text-white/60">02:26 · Riot Games</p>
+                </div>
+                <span className="text-[10px] font-black uppercase tracking-[0.4em] text-white/50">4K</span>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              {heroHighlights.map((highlight) => (
+                <div key={highlight.title} className="flex items-center justify-between rounded-2xl border border-white/10 bg-black/60 px-4 py-3">
+                  <div>
+                    <p className="text-sm font-semibold">{highlight.title}</p>
+                    <p className="text-xs text-white/60">{highlight.note}</p>
+                  </div>
+                  <span className="text-[10px] font-black uppercase tracking-[0.4em] text-white/30">VAL</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-3">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <p className="text-[11px] font-black uppercase tracking-[0.45em] text-white/50">Kasalar · Ajanlar · Skin Rotasyonu</p>
+            <span className="text-xs font-semibold text-white/60">MagicUI Bento Grid</span>
+          </div>
+          <BentoGrid className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <BentoGridItem
+              title="Kasalar"
+              description="Prime loot havuzu"
+              className="md:col-span-2"
+              footer="Drop oranları Riot verisiyle senkronize edilir"
+            >
+              <ul className="space-y-3">
+                {spotlightCases.map((caseItem) => (
+                  <li key={caseItem.name} className="flex items-center justify-between rounded-2xl border border-white/10 bg-black/40 px-4 py-3">
+                    <div>
+                      <p className="text-sm font-semibold">{caseItem.name}</p>
+                      <p className="text-xs text-white/50">{caseItem.odds}</p>
+                    </div>
+                    <span className="text-sm font-black">{caseItem.price}</span>
+                  </li>
+                ))}
+              </ul>
+            </BentoGridItem>
+            <BentoGridItem
+              title="Örnek Ajanlar"
+              description="Spotlight rotasyonu"
+              footer="Kasa simülasyonu, ajan skin setleri ile eşleşir"
+            >
+              <ul className="space-y-3">
+                {featuredAgents.map((agent) => (
+                  <li key={agent.name} className="flex items-center justify-between rounded-2xl bg-white/5 px-4 py-3">
+                    <div>
+                      <p className="text-sm font-semibold">{agent.name}</p>
+                      <p className="text-xs text-white/60">{agent.role}</p>
+                    </div>
+                    <span className="text-[11px] uppercase tracking-[0.3em] text-white/50">{agent.perk}</span>
+                  </li>
+                ))}
+              </ul>
+            </BentoGridItem>
+            <BentoGridItem
+              title="Skin Rotasyonu"
+              description="Günün vitrin seti"
+              footer="Favorilerini profile pinleyebilirsin"
+            >
+              <ul className="space-y-3">
+                {skinRotation.map((skin) => (
+                  <li key={skin.name} className="flex items-center justify-between rounded-2xl bg-linear-to-r from-white/5 to-white/0 px-4 py-3">
+                    <div>
+                      <p className="text-sm font-semibold">{skin.name}</p>
+                      <p className="text-xs text-white/60">{skin.tier}</p>
+                    </div>
+                    <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#ff4655]">LIVE</span>
+                  </li>
+                ))}
+              </ul>
+            </BentoGridItem>
+          </BentoGrid>
         </div>
       </div>
     </section>
