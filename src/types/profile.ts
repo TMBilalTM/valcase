@@ -1,3 +1,5 @@
+import type { ObjectId } from "mongodb";
+
 export interface InventoryItem {
   instanceId?: string;
   uuid: string;
@@ -9,7 +11,7 @@ export interface InventoryItem {
 }
 
 export interface UserProfile {
-  _id?: string;
+  _id?: ObjectId;
   username: string;
   email?: string;
   passwordHash?: string;
