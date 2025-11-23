@@ -1,36 +1,46 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## ValCase
 
-## Getting Started
+Valorant kozmetiklerini neon UI ile sunan interaktif kasa açma deneyimi. Veri seti doğrudan [Valorant API](https://dash.valorant-api.com/) uç noktalarından çekilir ve kasalara dağıtılır.
 
-First, run the development server:
+### Özellikler
+- **Çoklu sayfa deneyimi**: `/` kasalar ve içerik vitrini, `/profile` ise kullanıcı profilini ve envanteri gösterir.
+- **Canlı içerik**: Ajanlar, silah skinleri, haritalar, oyuncu kartları ve seviye kartları `https://valorant-api.com/v1` üzerinden yüklenir.
+- **Ağırlıklı kasa motoru**: `data/cases.ts` dosyasında tanımlanan loot tabloları ile her kasanın fiyatı ve drop yüzdeleri modellenir.
+- **UI/UX**: Aceternity & MagicUI bileşenlerinden ilham alan cam paneller, neon gradientler ve holografik kartlar.
+- **Ekonomi geribildirimi**: Bakiye durumu, anlık kazanç/kayıp bilgisi ve son 5 drop paneli.
+- **Mongo Atlas profili**: Kullanıcı bakiyesi, açılan kasa sayısı ve envanter bilgisi MongoDB Atlas koleksiyonunda saklanır (env yoksa varsayılan mock veri döner).
+
+### Geliştirme
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+`http://localhost:3000` adresini açarak güncel arayüzü görebilirsin. Kasalar istemci tarafında simüle edilir, dolayısıyla kullanıcı başına demo bakiyesi tutulur.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Ortam Değişkenleri
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Mongo Atlas üzerinde bir cluster oluştur.
+2. `Connection String` değerini `.env.local` dosyasına ekle:
 
-## Learn More
+```
+MONGODB_URI="mongodb+srv://<username>:<password>@<cluster-url>/valcase?retryWrites=true&w=majority"
+```
 
-To learn more about Next.js, take a look at the following resources:
+`MONGODB_URI` ayarlanmazsa profil sayfası varsayılan mock veriyi kullanacaktır.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### API Kullanımı
+| Domain | Endpoint | Not |
+| --- | --- | --- |
+| Ajanlar | `https://valorant-api.com/v1/agents?isPlayableCharacter=true` | Portre, rol ve gradient bilgisi alınır. |
+| Skinler | `https://valorant-api.com/v1/weapons/skins` | `contentTierUuid` nadirlik + çarpan sağlar. |
+| Haritalar | `https://valorant-api.com/v1/maps` | Splash ve lore özetleri kullanılır. |
+| Kartlar | `https://valorant-api.com/v1/playercards` | Geniş ve dikey görseller. |
+| Level borders | `https://valorant-api.com/v1/levelborders` | Hesap çerçeveleri ve başlangıç seviyeleri. |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Scriptler
+- `npm run dev`: Yerel geliştirme sunucusu
+- `npm run build`: Prod build
+- `npm run start`: Build sonrası sunucu
+- `npm run lint`: ESLint
