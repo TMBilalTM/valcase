@@ -52,7 +52,7 @@ export function ValHero() {
 
             <div className="flex flex-wrap gap-4">
               <Link
-                href="#cases"
+                href="/cases"
                 className="inline-flex items-center justify-center rounded-full bg-[#ff4655] px-8 py-3 text-xs font-black uppercase tracking-[0.4em] transition hover:bg-[#ff4655]/90"
               >
                 Kasa Aç
