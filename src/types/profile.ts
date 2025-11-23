@@ -21,4 +21,7 @@ export interface UserProfile {
   recentRewards: InventoryItem[];
   inventory: InventoryItem[];
   updatedAt: string;
+  lastClaimDate?: string;
+  loginStreak?: number;
+  nextReward?: number;
 }

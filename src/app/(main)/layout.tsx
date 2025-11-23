@@ -1,4 +1,5 @@
 import { SiteHeader } from "@/components/layout/SiteHeader";
+import { DailyRewardProvider } from "@/components/providers/DailyRewardProvider";
 
 export default function MainLayout({
   children,
@@ -8,7 +9,9 @@ export default function MainLayout({
   return (
     <>
       <SiteHeader />
-      <main>{children}</main>
+      <DailyRewardProvider>
+        <main>{children}</main>
+      </DailyRewardProvider>
     </>
   );
 }
