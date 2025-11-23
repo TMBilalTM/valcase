@@ -1,4 +1,5 @@
 export interface InventoryItem {
+  instanceId?: string;
   uuid: string;
   name: string;
   category: string;

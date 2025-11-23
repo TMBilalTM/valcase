@@ -69,6 +69,59 @@ export async function openCaseAction(caseId: string) {
   return { success: true, reward, newBalance };
 }
 
+export async function openMultipleCasesAction(caseId: string, count: 5 | 10) {
+  const userId = await getSessionId();
+  
+  if (!userId) {
+    return { error: "Lütfen giriş yapın." };
+  }
+
+  const profile = await getUserProfile(userId);
+  
+  if (!profile) {
+    return { error: "Kullanıcı profili bulunamadı." };
+  }
+
+  const caseDef = CASES.find((c) => c.id === caseId);
+
+  if (!caseDef) {
+    return { error: "Kasa bulunamadı." };
+  }
+
+  const totalCost = caseDef.price * count;
+
+  if (profile.balance < totalCost) {
+    return { error: `Yetersiz bakiye. ${count} kasa için ${totalCost.toLocaleString("tr-TR")} VP gerekli.` };
+  }
+
+  const content = await getValorantContent();
+  const rewards = [];
+
+  for (let i = 0; i < count; i++) {
+    const reward = openCase(caseDef, content);
+    if (reward) {
+      rewards.push(reward);
+    }
+  }
+
+  if (rewards.length === 0) {
+    return { error: "Kasalar açılırken bir hata oluştu." };
+  }
+
+  const newBalance = profile.balance - totalCost;
+
+  await updateUserBalance(userId, newBalance);
+  
+  for (const reward of rewards) {
+    await addRewardToProfile(userId, reward);
+  }
+
+  revalidatePath("/");
+  revalidatePath("/profile");
+
+  return { success: true, rewards, newBalance, count: rewards.length };
+}
+
 export async function getBalanceAction() {
   const userId = await getSessionId();
   if (!userId) return 0;

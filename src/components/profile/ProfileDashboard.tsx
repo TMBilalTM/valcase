@@ -2,6 +2,7 @@ import Link from "next/link";
 import { GlassPanel } from "@/components/ui/panel";
 import { formatCurrency } from "@/lib/utils";
 import type { UserProfile } from "@/types/profile";
+import { InventoryActions } from "@/components/profile/InventoryActions";
 
 interface Props {
   profile: UserProfile;
@@ -11,7 +12,6 @@ export function ProfileDashboard({ profile }: Props) {
   const totalOpened = profile.totalOpened ?? 0;
   const level = Math.max(1, Math.floor(totalOpened / 25) + 1);
   const progress = ((totalOpened % 25) / 25) * 100;
-  const inventoryPreview = profile.inventory.slice(0, 4);
   const recentRewards = profile.recentRewards.slice(0, 5);
 
   return (
@@ -131,32 +131,7 @@ export function ProfileDashboard({ profile }: Props) {
         </GlassPanel>
 
         <GlassPanel className="bg-[#0c111d]/80">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs uppercase tracking-[0.4em] text-white/50">Envanter Önizleme</p>
-              <p className="text-sm text-white/50">Sadece son dört drop gösterilir.</p>
-            </div>
-            <Link href="/" className="text-[10px] font-black uppercase tracking-[0.3em] text-[#ff4655]">
-              Tamamını Gör
-            </Link>
-          </div>
-
-          <div className="mt-6 grid gap-3 md:grid-cols-2">
-            {inventoryPreview.length === 0 ? (
-              <p className="text-sm text-white/60">Kasan açılmayı bekliyor. Stokta öge yok.</p>
-            ) : (
-              inventoryPreview.map((item) => (
-                <div key={`${item.uuid}-${item.acquiredAt}`} className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                  <div className="flex items-center justify-between">
-                    <p className="text-sm font-semibold text-white">{item.name}</p>
-                    <span className="text-[10px] uppercase tracking-[0.3em] text-white/50">{item.category}</span>
-                  </div>
-                  <p className="mt-3 text-base font-bold text-emerald-300">{formatCurrency(item.value)} VP</p>
-                  <p className="text-[10px] text-white/40">{new Date(item.acquiredAt).toLocaleDateString("tr-TR")}</p>
-                </div>
-              ))
-            )}
-          </div>
+          <InventoryActions inventory={profile.inventory} />
         </GlassPanel>
       </div>
 

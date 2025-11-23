@@ -28,7 +28,16 @@ export function openCase(caseDef: CaseDefinition, content: ValorantContent): Cas
 
   const base = BASE_VALUES[loot.pool];
   const rarityBoost = selection.rarityMultiplier ?? 1;
-  const value = Math.round(base * loot.multiplier * rarityBoost * randomBetween(0.9, 1.25));
+  const poolValue = base * loot.multiplier * rarityBoost;
+
+  const houseEdge = caseDef.price * 0.9; // çoğu durumda hafif zarar
+  const blended = poolValue * 0.65 + houseEdge * 0.35;
+  const variance = randomBetween(0.85, 1.35);
+
+  let value = Math.round(blended * variance);
+  const minValue = Math.round(caseDef.price * 0.45);
+  const maxValue = Math.round(caseDef.price * 2.2);
+  value = Math.min(Math.max(value, minValue), maxValue);
 
   return {
     caseId: caseDef.id,

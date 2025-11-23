@@ -58,11 +58,28 @@ section + section {
     }
   }
 
+  @keyframes marquee-loop {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
   .animate-ticker {
     animation: ticker 28s linear infinite;
   }
 
   .animate-glow {
     animation: glow-pulse 6s ease-in-out infinite;
+  }
+
+  .animate-marquee {
+    animation: marquee-loop var(--duration, 24s) linear infinite;
+  }
+
+  [data-marquee="pause"]:hover .animate-marquee {
+    animation-play-state: paused;
   }
 }

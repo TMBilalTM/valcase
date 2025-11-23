@@ -5,7 +5,8 @@ import { formatCurrency } from "@/lib/utils";
 import { logoutAction } from "@/app/auth/actions";
 
 const links = [
-  { href: "/", label: "KASALAR" },
+  { href: "/", label: "ANA SAYFA" },
+  { href: "/cases", label: "KASALAR" },
 ];
 
 export async function SiteHeader() {

@@ -1,6 +1,5 @@
 import Link from "next/link";
 
-import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
 import { VideoText } from "@/registry/magicui/video-text";
 
 const heroStats = [
@@ -19,24 +18,6 @@ const heroVideo = {
   src: "https://assets.contentstack.io/v3/assets/bltb6530b271fddd0b1/blt0e640f7f4b0f8434/5e8c6dee5d90243ce318b1aa/VALORANT_Duelists.mp4",
   poster: "https://i.ytimg.com/vi/e_E9W2vsRbQ/maxresdefault.jpg",
 };
-
-const spotlightCases = [
-  { name: "Radiant Frontier", price: "₺680", odds: "Ultra %20" },
-  { name: "Protocol Vault", price: "₺420", odds: "Dengeli %55" },
-  { name: "Omega Archive", price: "₺540", odds: "Lore %35" },
-];
-
-const featuredAgents = [
-  { name: "Jett", role: "Duelist", perk: "Dash Boost" },
-  { name: "Killjoy", role: "Sentinel", perk: "Nano Swarm" },
-  { name: "Fade", role: "Initiator", perk: "Haunt" },
-];
-
-const skinRotation = [
-  { name: "Prime Vandal", tier: "Ultra" },
-  { name: "Reaver Phantom", tier: "Exclusive" },
-  { name: "Sentinels of Light Sheriff", tier: "Premium" },
-];
 
 export function ValHero() {
   return (
@@ -129,67 +110,6 @@ export function ValHero() {
               ))}
             </div>
           </div>
-        </div>
-
-        <div className="space-y-3">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <p className="text-[11px] font-black uppercase tracking-[0.45em] text-white/50">Kasalar · Ajanlar · Skin Rotasyonu</p>
-            <span className="text-xs font-semibold text-white/60">MagicUI Bento Grid</span>
-          </div>
-          <BentoGrid className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <BentoGridItem
-              title="Kasalar"
-              description="Prime loot havuzu"
-              className="md:col-span-2"
-              footer="Drop oranları Riot verisiyle senkronize edilir"
-            >
-              <ul className="space-y-3">
-                {spotlightCases.map((caseItem) => (
-                  <li key={caseItem.name} className="flex items-center justify-between rounded-2xl border border-white/10 bg-black/40 px-4 py-3">
-                    <div>
-                      <p className="text-sm font-semibold">{caseItem.name}</p>
-                      <p className="text-xs text-white/50">{caseItem.odds}</p>
-                    </div>
-                    <span className="text-sm font-black">{caseItem.price}</span>
-                  </li>
-                ))}
-              </ul>
-            </BentoGridItem>
-            <BentoGridItem
-              title="Örnek Ajanlar"
-              description="Spotlight rotasyonu"
-              footer="Kasa simülasyonu, ajan skin setleri ile eşleşir"
-            >
-              <ul className="space-y-3">
-                {featuredAgents.map((agent) => (
-                  <li key={agent.name} className="flex items-center justify-between rounded-2xl bg-white/5 px-4 py-3">
-                    <div>
-                      <p className="text-sm font-semibold">{agent.name}</p>
-                      <p className="text-xs text-white/60">{agent.role}</p>
-                    </div>
-                    <span className="text-[11px] uppercase tracking-[0.3em] text-white/50">{agent.perk}</span>
-                  </li>
-                ))}
-              </ul>
-            </BentoGridItem>
-            <BentoGridItem
-              title="Skin Rotasyonu"
-              description="Günün vitrin seti"
-              footer="Favorilerini profile pinleyebilirsin"
-            >
-              <ul className="space-y-3">
-                {skinRotation.map((skin) => (
-                  <li key={skin.name} className="flex items-center justify-between rounded-2xl bg-linear-to-r from-white/5 to-white/0 px-4 py-3">
-                    <div>
-                      <p className="text-sm font-semibold">{skin.name}</p>
-                      <p className="text-xs text-white/60">{skin.tier}</p>
-                    </div>
-                    <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#ff4655]">LIVE</span>
-                  </li>
-                ))}
-              </ul>
-            </BentoGridItem>
-          </BentoGrid>
         </div>
       </div>
     </section>

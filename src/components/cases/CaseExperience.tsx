@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useMemo, useState, useEffect } from "react";
 import { CASES } from "@/data/cases";
-import { openCaseAction } from "@/app/actions";
+import { openCaseAction, openMultipleCasesAction } from "@/app/actions";
 import type { CaseReward, ValorantContent, CaseDefinition } from "@/types/valorant";
 import { formatCurrency } from "@/lib/utils";
 import { GlassPanel } from "@/components/ui/panel";
@@ -55,6 +55,11 @@ export function CaseExperience({ content, initialBalance }: Props) {
   const [showRewardModal, setShowRewardModal] = useState(false);
   const [lastReward, setLastReward] = useState<CaseReward | null>(null);
 
+  // Bulk opening state
+  const [showBulkModal, setShowBulkModal] = useState(false);
+  const [bulkRewards, setBulkRewards] = useState<CaseReward[]>([]);
+  const [bulkReelStates, setBulkReelStates] = useState<Array<{ items: Array<{ id: string; image: string; color: string; name: string }>; offset: number; isAnimating: boolean }>>([]);
+
   useEffect(() => {
     setBalance(initialBalance);
   }, [initialBalance]);
@@ -62,61 +67,115 @@ export function CaseExperience({ content, initialBalance }: Props) {
   const recent = history.slice(0, 5);
   const featuredReward = useMemo(() => history[0], [history]);
 
-  const handleOpen = async (caseId: string) => {
+  const handleOpen = async (caseId: string, count: 1 | 5 | 10 = 1) => {
     const caseDef = CASES.find((c) => c.id === caseId);
-    if (!caseDef || balance < caseDef.price || isRolling) return;
+    const totalCost = caseDef ? caseDef.price * count : 0;
+    if (!caseDef || balance < totalCost || isRolling) return;
 
     setIsRolling(true);
-    setBalance((prev) => prev - caseDef.price);
+    setBalance((prev) => prev - totalCost);
 
     try {
-      const result = await openCaseAction(caseId);
-      
-      if (result.error || !result.success || !result.reward) {
-        setBalance((prev) => prev + caseDef.price);
-        alert(result.error || "Hata oluştu.");
+      if (count === 1) {
+        const result = await openCaseAction(caseId);
+        
+        if (result.error || !result.success || !result.reward) {
+          setBalance((prev) => prev + totalCost);
+          alert(result.error || "Hata oluştu.");
+          setIsRolling(false);
+          return;
+        }
+
+        // Prepare animation
+        const WINNER_INDEX = 35;
+        const ITEM_WIDTH = 256; // w-64
+        const GAP = 16; // gap-4
+        const items = generateReelItems(caseDef, content, result.reward, 50, WINNER_INDEX);
+        
+        setReelItems(items);
+        setShowReel(true);
+        setReelOffset(0); // Reset position
+
+        // Force reflow to ensure start position is rendered before transition
+        await new Promise(r => setTimeout(r, 50));
+
+        // Start roll
+        const targetOffset = -1 * (WINNER_INDEX * (ITEM_WIDTH + GAP) + (ITEM_WIDTH / 2));
+        
+        setReelOffset(targetOffset);
+
+        // Wait for animation (e.g. 6s)
+        await new Promise((resolve) => setTimeout(resolve, 6000));
+
+        setBalance(result.newBalance);
+        setHistory((prev) => [result.reward!, ...prev].slice(0, 20));
+        setLastReward(result.reward);
+        
+        // Show modal and hide reel
+        setTimeout(() => {
+          setShowReel(false);
+          setShowRewardModal(true);
+          setIsRolling(false);
+        }, 500);
+      } else {
+        // Bulk opening (5 or 10) with staggered animations
+        const result = await openMultipleCasesAction(caseId, count as 5 | 10);
+
+        if (result.error || !result.success || !result.rewards) {
+          setBalance((prev) => prev + totalCost);
+          alert(result.error || "Hata oluştu.");
+          setIsRolling(false);
+          return;
+        }
+
+        setBulkRewards(result.rewards!);
+        setShowBulkModal(true);
+
+        // Initialize all reels
+        const WINNER_INDEX = 20;
+        const ITEM_WIDTH = 120;
+        const GAP = 8;
+        
+        const initialStates = result.rewards!.map((reward) => ({
+          items: generateReelItems(caseDef, content, reward, 30, WINNER_INDEX),
+          offset: 0,
+          isAnimating: false,
+        }));
+        
+        setBulkReelStates(initialStates);
+
+        // Stagger animations
+        await new Promise(r => setTimeout(r, 100));
+        
+        for (let i = 0; i < initialStates.length; i++) {
+          await new Promise(r => setTimeout(r, i * 150)); // stagger by 150ms
+          
+          setBulkReelStates((prev) => {
+            const updated = [...prev];
+            updated[i] = { ...updated[i], isAnimating: true };
+            return updated;
+          });
+
+          await new Promise(r => setTimeout(r, 50));
+
+          const targetOffset = -1 * (WINNER_INDEX * (ITEM_WIDTH + GAP) + (ITEM_WIDTH / 2));
+          setBulkReelStates((prev) => {
+            const updated = [...prev];
+            updated[i] = { ...updated[i], offset: targetOffset };
+            return updated;
+          });
+        }
+
+        // Wait for all animations to complete
+        await new Promise(r => setTimeout(r, 3000));
+
+        setBalance(result.newBalance);
+        setHistory((prev) => [...result.rewards!, ...prev].slice(0, 20));
         setIsRolling(false);
-        return;
       }
-
-      // Prepare animation
-      const WINNER_INDEX = 35;
-      const ITEM_WIDTH = 256; // w-64
-      const GAP = 16; // gap-4
-      const items = generateReelItems(caseDef, content, result.reward, 50, WINNER_INDEX);
-      
-      setReelItems(items);
-      setShowReel(true);
-      setReelOffset(0); // Reset position
-
-      // Force reflow to ensure start position is rendered before transition
-      await new Promise(r => setTimeout(r, 50));
-
-      // Start roll
-      // Calculate offset to center the winner
-      // Formula: -1 * (WINNER_INDEX * (ITEM_WIDTH + GAP) + (ITEM_WIDTH / 2))
-      // This aligns the center of the winner item with the start of the flex container (which is centered via px-[50%])
-      const targetOffset = -1 * (WINNER_INDEX * (ITEM_WIDTH + GAP) + (ITEM_WIDTH / 2));
-      
-      setReelOffset(targetOffset);
-
-      // Wait for animation (e.g. 6s)
-      await new Promise((resolve) => setTimeout(resolve, 6000));
-
-      setBalance(result.newBalance);
-      setHistory((prev) => [result.reward!, ...prev].slice(0, 20));
-      setLastReward(result.reward);
-      
-      // Show modal and hide reel
-      setTimeout(() => {
-        setShowReel(false);
-        setShowRewardModal(true);
-        setIsRolling(false);
-      }, 500);
-
     } catch (error) {
       console.error(error);
-      setBalance((prev) => prev + caseDef.price);
+      setBalance((prev) => prev + totalCost);
       setIsRolling(false);
     }
   };
@@ -195,6 +254,59 @@ export function CaseExperience({ content, initialBalance }: Props) {
                     className="mt-4 w-full bg-[#ff4655] py-3 text-sm font-bold uppercase tracking-widest text-white transition hover:bg-[#ff4655]/80 cursor-pointer"
                  >
                     TAMAM
+                 </button>
+              </div>
+           </div>
+        </div>
+      )}
+
+      {/* Bulk Rewards Modal with Animations */}
+      {showBulkModal && bulkRewards.length > 0 && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 animate-in fade-in duration-300">
+           <div className="relative w-full max-w-6xl max-h-[90vh] overflow-auto rounded-3xl border border-white/10 bg-[#05070e] p-6 shadow-[0_0_60px_rgba(0,0,0,0.6)]">
+              <div className="space-y-4">
+                 <div className="text-center">
+                   <h2 className="text-2xl font-black uppercase text-white">{bulkRewards.length}X KASA AÇILIYOR</h2>
+                   <p className="mt-1 text-sm text-white/60">Toplam Değer: {formatCurrency(bulkRewards.reduce((sum, r) => sum + r.value, 0))} VP</p>
+                 </div>
+                 <div className="space-y-3">
+                   {bulkRewards.map((reward, index) => {
+                     const reelState = bulkReelStates[index];
+                     if (!reelState) return null;
+                     
+                     return (
+                       <div key={`bulk-${index}`} className="relative overflow-hidden rounded-2xl border border-[#ff4655]/30 bg-[#0f1923]">
+                         <div className="absolute left-1/2 top-0 z-20 h-full w-0.5 -translate-x-1/2 bg-[#ff4655]/60" />
+                         <div 
+                           className={`flex h-32 items-center gap-2 px-[50%] ${reelState.isAnimating ? 'transition-transform duration-2800 ease-[cubic-bezier(0.15,0,0.10,1)]' : ''}`}
+                           style={{ transform: `translateX(${reelState.offset}px)` }}
+                         >
+                           {reelState.items.map((item) => (
+                             <div 
+                               key={item.id} 
+                               className="relative flex h-24 w-[120px] shrink-0 flex-col items-center justify-center gap-1 border border-white/10 bg-white/5 p-2"
+                               style={{ borderColor: item.color }}
+                             >
+                               <div className="relative h-16 w-full">
+                                 <Image src={item.image} alt={item.name} fill className="object-contain" sizes="120px" />
+                               </div>
+                               <p className="text-center text-[10px] font-semibold uppercase text-white/80 line-clamp-1">{item.name}</p>
+                               <div className="absolute bottom-0 h-1 w-full" style={{ backgroundColor: item.color }} />
+                             </div>
+                           ))}
+                         </div>
+                         <div className="absolute bottom-2 right-2 rounded bg-black/60 px-2 py-1 text-[10px] font-bold uppercase text-white">
+                           #{index + 1}
+                         </div>
+                       </div>
+                     );
+                   })}
+                 </div>
+                 <button 
+                    onClick={() => setShowBulkModal(false)}
+                    className="mt-4 w-full rounded-lg bg-[#ff4655] py-3 text-sm font-bold uppercase tracking-widest text-white transition hover:bg-[#ff4655]/80 cursor-pointer"
+                 >
+                    KAPAT
                  </button>
               </div>
            </div>
