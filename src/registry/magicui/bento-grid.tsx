@@ -1,5 +1,6 @@
 import Link from "next/link";
-import type { ComponentType, ReactNode, SVGProps } from "react";
+import type { ComponentType, ReactNode } from "react";
+import type { LucideProps } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
@@ -22,7 +23,7 @@ export function BentoGrid({ children, className }: BentoGridProps) {
 }
 
 interface BentoCardProps {
-  Icon?: ComponentType<SVGProps<SVGSVGElement>>;
+  Icon?: ComponentType<LucideProps> | ComponentType<{ className?: string }>;
   name: string;
   description: string;
   href?: string;

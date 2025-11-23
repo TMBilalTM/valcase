@@ -1,4 +1,4 @@
-import { MongoClient } from "mongodb";
+import { MongoClient, type Document } from "mongodb";
 
 const uri = process.env.MONGODB_URI;
 
@@ -26,7 +26,7 @@ export async function getMongoClient() {
   return globalForMongo._mongoPromise;
 }
 
-export async function getCollection<T>(name: string) {
+export async function getCollection<T extends Document>(name: string) {
   const client = await getMongoClient();
   return client.db("valcase").collection<T>(name);
 }
